@@ -7,6 +7,7 @@ class FlutterInsta {
   String? _followers, _following, _website, _bio, _imgurl, _username;
   // List of images from user feed
   List<String>? _feedImagesUrl;
+  List<String>? _feedVideoUrl;
 
   //Download reels video
   Future<String> downloadReels(String link) async {
@@ -37,9 +38,16 @@ class FlutterInsta {
     _following = myfollowing['count'].toString();
     _website = user['external_url'];
     _imgurl = user['profile_pic_url_hd'];
-    _feedImagesUrl = user['edge_owner_to_timeline_media']['edges']
+
+    var ownerEdges= user['edge_owner_to_timeline_media']['edges'];
+
+    _feedImagesUrl = ownerEdges
         .map<String>((image) => image['node']['display_url'] as String)
         .toList();
+    _feedVideoUrl = ownerEdges.where((image)=> image['node']['isVideo'] == true)
+        .map<String>((image) => image['node']['video_url'])
+        .toList();
+        //.map<String>((image) => { image['node']['display_url'] as String } );
     this._username = username;
   }
 
@@ -57,4 +65,7 @@ class FlutterInsta {
 
   List<String>? get feedImagesUrl =>
       _feedImagesUrl; // List of URLs of feed images
+
+  List<String>? get feedVideosUrl =>
+      _feedVideoUrl; // List of URLs of feed images
 }
